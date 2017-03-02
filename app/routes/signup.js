@@ -35,7 +35,7 @@ var registerGateway = function (cloud, ownerUuid, cb) {
 
 var registerUser = function (cloud, user, cb) {
   request({
-    url: 'http://' + cloud.servername + ':' + cloud.port + '/devices',
+    url: 'http://' + cloud.servername + ':' + cloud.port + '/devices/user',
     method: 'POST',
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded'
@@ -44,11 +44,17 @@ var registerUser = function (cloud, user, cb) {
   }, function (err, response, body) {
     var data = {};
     var result;
+    result = JSON.parse(body);
     if (err) {
       console.log('Error registering user on cloud: ' + err);
+      err.status = 500;
+      cb(err, null);
+    } else if (!result.user) {
+      err = {};
+      console.log('User already exist');
+      err.status = 409;
       cb(err, null);
     } else {
-      result = JSON.parse(body);
       data.email = result.user.email;
       data.password = result.user.password;
       data.uuid = result.uuid;
@@ -68,7 +74,7 @@ var post = function post(req, res) {
     } else {
       registerUser(cloud, user, function (err2, newUser) {
         if (err2) {
-          res.sendStatus(500);
+          res.sendStatus(err2.status);
         } else {
           registerGateway(cloud, user.uuid, function (err3, gateway) {
             users.setUser(newUser, function (err4) {
