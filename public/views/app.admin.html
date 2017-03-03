@@ -1,5 +1,15 @@
 <div class="jumbotron administration">
   <form class="form-administration" ng-submit="save()" ng-init="init()">
+    <h2 class="form-home-heading">User Informations</h2>
+    <label for="uuid" class="sr-only">UUID</label>
+    <input type="text" id="uuid" class="form-control" ng-model="form.uuid" ng-disabled="form.uuid">
+    <label for="token" class="sr-only">Token</label>
+    <input type="text" id="token" class="form-control" ng-model="form.token" ng-disabled="form.token">
+    <label for="uuidFog" class="sr-only">Gateway's UUID</label>
+    <input type="text" id="uuidFog" class="form-control" ng-model="form.uuidFog" ng-disabled="form.uuidFog">
+    <label for="tokenFog" class="sr-only">Gateway's Token</label>
+    <input type="text" id="tokenFog" class="form-control" ng-model="form.tokenFog" ng-disabled="form.tokenFog">
+
     <h2 class="form-home-heading">Administration</h2>
     <label for="inputGatewayPassword" class="sr-only">Password</label>
     <input type="password" id="inputGatewayPassword" class="form-control" placeholder="Password" ng-model="form.password" required>

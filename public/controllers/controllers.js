@@ -47,7 +47,11 @@ app.controller('AdminController', function ($rootScope, $scope, $location, $stat
     sshKey: null,
     currentFirmware: null,
     newFirmware: null,
-    newFirmware64Base: null
+    newFirmware64Base: null,
+    uuidFog: null,
+    tokenFog: null,
+    uuid: null,
+    token: null
   };
 
   $rootScope.activetab = $location.path();
@@ -59,6 +63,10 @@ app.controller('AdminController', function ($rootScope, $scope, $location, $stat
         formData.allowedPassword = result.allowedPassword;
         formData.sshKey = result.sshKey;
         formData.currentFirmware = result.firmware;
+        formData.uuidFog = result.uuidFog;
+        formData.tokenFog = result.tokenFog;
+        formData.uuid = result.uuid;
+        formData.token = result.token;
       }, function onError(err) {
         console.log(err);
       });

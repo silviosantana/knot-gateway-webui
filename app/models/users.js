@@ -20,8 +20,18 @@ var setUser = function setUser(user, done) {
   });
 };
 
-var getUser = function getUser(email, done) {
+var getUserByEmail = function getUser(email, done) {
   User.findOne({ email: email }, function (err, user) {
+    if (err) {
+      done(err);
+    } else {
+      done(null, user);
+    }
+  });
+};
+
+var getUser = function getUser(done) {
+  User.findOne({}, function (err, user) {
     if (err) {
       done(err);
     } else {
@@ -32,5 +42,6 @@ var getUser = function getUser(email, done) {
 
 module.exports = {
   setUser: setUser,
-  getUser: getUser
+  getUser: getUser,
+  getUserByEmail: getUserByEmail
 };

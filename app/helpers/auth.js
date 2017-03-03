@@ -44,7 +44,7 @@ var authorize = function authorize() {
 // Configure passport
 passport.use(new LocalStrategy({ usernameField: 'email' },
   function (email, password, done) {
-    users.getUser(email, function onUserReturned(err, user) {
+    users.getUserByEmail(email, function onUserReturned(err, user) {
       if (err) {
         return done(err);
       } else if (!user || email !== user.email || !isValidPassword(user, password)) {
