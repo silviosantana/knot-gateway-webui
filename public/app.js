@@ -20,6 +20,15 @@ app.config(function config($stateProvider, $urlRouterProvider, $httpProvider, RO
       templateUrl: 'views/signup.html',
       controller: 'SignupController'
     })
+    .state('logout', {
+      url: '/logout',
+      controller: function logout($state, AuthService) {
+        if (confirm('Do you really want to log out?')) {
+          AuthService.deleteToken();
+        }
+        $state.go('signin');
+      }
+    })
     .state('app', {
       abstract: true,
       templateUrl: 'views/app.html',

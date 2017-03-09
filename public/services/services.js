@@ -36,6 +36,11 @@ app.factory('AuthService', function ($http, $sessionStorage, $window, ROLES) {
     }
   };
 
+  authFactory.deleteToken = function deleteToken() {
+    $sessionStorage.token = null;
+    clearUser();
+  };
+
   authFactory.signin = function signin(userData) {
     return $http({
       method: 'POST',
