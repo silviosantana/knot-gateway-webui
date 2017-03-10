@@ -55,6 +55,9 @@ var writeFile = function writeFile(type, incomingData, done) {
           }
         }
       });
+    } else if (type === 'cloud') {
+      localData.cloud.uuid = incomingData.uuid;
+      localData.cloud.token = incomingData.token;
     }
     fs.writeFile(CONFIGURATION_FILE, JSON.stringify(localData), 'utf8', done);
   });
@@ -107,6 +110,10 @@ var getRadioSettings = function getRadioSettings(done) {
       }
     }
   });
+};
+
+var setUserCredentials = function setUserCredentials(settings, done) {
+  writeFile('cloud', settings, done);
 };
 
 var getNetworkSettings = function getNetworkSettings(done) {
@@ -164,6 +171,7 @@ module.exports = {
   getAdministrationSettings: getAdministrationSettings,
   setAdministrationSettings: setAdministrationSettings,
   getRadioSettings: getRadioSettings,
+  setUserCredentials: setUserCredentials,
   getNetworkSettings: getNetworkSettings,
   setNetworkSettings: setNetworkSettings,
   setDefaultSettings: setDefaultSettings
