@@ -40,8 +40,21 @@ var getUserByEmail = function getUserByEmail(email, done) {
   });
 };
 
+var isEmpty = function isEmpty(done) {
+  User.findOne({}, function (err, user) {
+    if (err) {
+      done(err);
+    } else if (!user) {
+      done(null, true);
+    } else {
+      done(null, false);
+    }
+  });
+};
+
 module.exports = {
   setUser: setUser,
   getUserByEmail: getUserByEmail,
-  getUserByUUID: getUserByUUID
+  getUserByUUID: getUserByUUID,
+  isEmpty: isEmpty
 };

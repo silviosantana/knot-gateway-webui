@@ -20,6 +20,11 @@ app.config(function config($stateProvider, $urlRouterProvider, $httpProvider, RO
       templateUrl: 'views/signup.html',
       controller: 'SignupController'
     })
+    .state('linkAccount', {
+      url: '/link',
+      templateUrl: 'views/linkAccount.html',
+      controller: 'LinkController'
+    })
     .state('app', {
       abstract: true,
       templateUrl: 'views/app.html',

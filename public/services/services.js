@@ -62,6 +62,19 @@ app.factory('AuthService', function ($http, $sessionStorage, $window, ROLES) {
     return currentUser.role === ROLES.ADMIN;
   };
 
+  authFactory.linkAccount = function linkAccount(userData) {
+    return $http({
+      method: 'POST',
+      url: '/api/link',
+      data: userData,
+      config: {
+        headers: {
+          'Content-Type': 'application/json;charset=utf-8;'
+        }
+      }
+    });
+  };
+
   // Init
   clearUser();
   loadToken();

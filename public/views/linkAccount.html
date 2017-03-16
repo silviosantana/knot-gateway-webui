@@ -1,0 +1,17 @@
+<div align="center" ng-init="init()">
+  <img src="img/knot_logo_green_background.png" class="round-image" />
+  <h2 class="banner">KNoT Gateway</h2>
+</div>
+<div>
+  <h2 class="banner small-font" align="center" >Link to an existent User account</h2>
+</div>
+<div align="center" class="container home-container">
+  <form class="form-home" ng-submit="linkAccount()">
+    <input type="text" id="inputUuid" class="form-control" placeholder="User UUID" ng-model="form.uuid" required>
+    <input type="text" id="inputToken" class="form-control" placeholder="User Token" ng-model="form.token" required>
+    <input type="text" id="inputEmail" class="form-control" placeholder="Email" ng-model="form.email" required>
+    <input type="password" id="inputPassword" class="form-control" placeholder="Password" ng-model="form.password" required>
+    <button class="btn btn-lg btn-primary btn-block" type="submit">Link</button>
+  </form>
+  <a ui-sref="signup">Create account</a>
+</div>

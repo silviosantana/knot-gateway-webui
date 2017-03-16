@@ -5,6 +5,8 @@ var jwt = require('jsonwebtoken');
 var expressJwt = require('express-jwt');
 var users = require('../models/users');
 var bCrypt = require('bcrypt-nodejs');
+var request = require('request');
+var cloudConfig = require('../models/cloud');
 
 var TOKEN_SECRET = require('../config').TOKEN_SECRET;
 var TOKEN_EXPIRATION = require('../config').TOKEN_EXPIRATION;
@@ -29,8 +31,67 @@ var respond = function respond(req, res) {
   });
 };
 
+var verifyUserOnCloud = function (cloud, email, done) {
+  request({
+    url: 'http://' + cloud.servername + ':' + cloud.port + '/devices/user',
+    method: 'GET',
+    headers: {
+      meshblu_auth_email: email
+    }
+  }, function (err, response, body) {
+    var data = {};
+    var result;
+    if (body) {
+      result = JSON.parse(body);
+    }
+    if (err) {
+      console.log('Error retrieving user from cloud: ' + err);
+      err.status = 500;
+      done(err, null);
+    } else if (!result.email) {
+      err = {};
+      console.log('User not found');
+      err.status = 500;
+      done(err, null);
+    } else {
+      data.email = result.email;
+      done(null, data);
+    }
+  });
+};
+
+var signinOnCloud = function signinOnCloud(req, res) {
+  cloudConfig.getCloudSettings(function onCloudSettingsSet(err, cloud) {
+    if (err || !cloud) {
+      res.sendStatus(400);
+    } else {
+      verifyUserOnCloud(cloud, req.body.email, function (error, result) {
+        if (error) {
+          res.sendStatus(error.status);
+        } else {
+          res.status(409).send(result);
+        }
+      });
+    }
+  });
+};
+
+var checkDatabase = function checkDatabase(req, res, next) {
+  users.isEmpty(function (err, empty) {
+    if (err) {
+      return err;
+    } else if (empty) {
+      signinOnCloud(req, res);
+    } else {
+      next();
+    }
+    return null;
+  });
+};
+
 var authenticate = function authenticate() {
   var chain = connect();
+  chain.use(checkDatabase);
   chain.use(passport.authenticate('local', { session: false }));
   chain.use(createToken);
   chain.use(respond);

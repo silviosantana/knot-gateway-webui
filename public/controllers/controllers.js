@@ -10,11 +10,17 @@ app.controller('AppController', function ($scope, $state, AuthService) {
 app.controller('SigninController', function ($scope, $state, AuthService) {
   $scope.signin = function signin() {
     AuthService.signin($scope.form)
-      .then(function onSuccess() {
-        $state.go('app.admin');
-      }, function onError() {
+    .then(function onSuccess() {
+      $state.go('app.admin');
+    }, function onError(err) {
+      if (err.status === 400) {
+        $state.go('cloud');
+      } else if (err.status === 409) {
+        $state.go('linkAccount');
+      } else if (err.status === 500) {
         alert('Authentication Error');
-      });
+      }
+    });
   };
 });
 
@@ -42,6 +48,30 @@ app.controller('SignupController', function ($scope, $state, $http, SignupServic
     } else {
       alert('Password does not match');
     }
+  };
+});
+
+app.controller('LinkController', function ($scope, $state, AuthService) {
+  $scope.linkAccount = function () {
+    var userData = {
+      uuid: $scope.form.uuid,
+      token: $scope.form.token,
+      email: $scope.form.email,
+      password: $scope.form.password
+    };
+    AuthService.linkAccount(userData)
+    .then(function onSuccess(/* result */) {
+      alert('Gateway registered to User');
+      $state.go('app.admin');
+    }, function onError(err) {
+      if (err.status === 400) {
+        $state.go('cloud');
+      } else if (err.status === 409) {
+        alert('User authentication error');
+      } else if (err.status === 500) {
+        alert('Error registering gateway');
+      }
+    });
   };
 });
 
