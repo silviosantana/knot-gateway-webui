@@ -75,6 +75,19 @@ app.factory('AuthService', function ($http, $sessionStorage, $window, ROLES) {
     });
   };
 
+  authFactory.restoreGateway = function restoreGateway(userData) {
+    return $http({
+      method: 'POST',
+      url: '/api/restore',
+      data: userData,
+      config: {
+        headers: {
+          'Content-Type': 'application/json;charset=utf-8;'
+        }
+      }
+    });
+  };
+
   // Init
   clearUser();
   loadToken();

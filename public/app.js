@@ -23,7 +23,10 @@ app.config(function config($stateProvider, $urlRouterProvider, $httpProvider, RO
     .state('linkAccount', {
       url: '/link',
       templateUrl: 'views/linkAccount.html',
-      controller: 'LinkController'
+      controller: 'LinkController',
+      params: {
+        data: null
+      }
     })
     .state('app', {
       abstract: true,

@@ -16,8 +16,8 @@ app.controller('SigninController', function ($scope, $state, AuthService) {
       if (err.status === 400) {
         $state.go('cloud');
       } else if (err.status === 409) {
-        $state.go('linkAccount');
-      } else if (err.status === 500) {
+        $state.go('linkAccount', { data: $scope.form });
+      } else if (err.status === 500 || err.status === 401) {
         alert('Authentication Error');
       }
     });
@@ -51,27 +51,75 @@ app.controller('SignupController', function ($scope, $state, $http, SignupServic
   };
 });
 
-app.controller('LinkController', function ($scope, $state, AuthService) {
+app.controller('LinkController', function ($scope, $state, $stateParams, AuthService) {
+  var restoreGateway = function (userData) {
+    AuthService.restoreGateway(userData)
+      .then(function onSuccess(/* result */) {
+        alert('Gateway restored!');
+        $state.go('app.admin');
+      }, function onError(err) {
+        if (err.status === 400) {
+          $state.go('cloud');
+        } else if (err.status === 409) {
+          alert('User authentication error');
+        } else if (err.status === 500) {
+          alert('Error registering gateway');
+        }
+      });
+  };
+
+  $scope.init = function () {
+    $scope.restoreFlag = false;
+    $scope.buttonName = 'Register';
+  };
+
+  $scope.check = function (value) {
+    if (value === 'register') {
+      $scope.restoreFlag = false;
+      $scope.buttonName = 'Register';
+    } else {
+      $scope.restoreFlag = true;
+      $scope.buttonName = 'Restore';
+    }
+  };
+
   $scope.linkAccount = function () {
-    var userData = {
-      uuid: $scope.form.uuid,
-      token: $scope.form.token,
-      email: $scope.form.email,
-      password: $scope.form.password
-    };
-    AuthService.linkAccount(userData)
-    .then(function onSuccess(/* result */) {
-      alert('Gateway registered to User');
-      $state.go('app.admin');
-    }, function onError(err) {
-      if (err.status === 400) {
-        $state.go('cloud');
-      } else if (err.status === 409) {
-        alert('User authentication error');
-      } else if (err.status === 500) {
-        alert('Error registering gateway');
+    var userData = {};
+    if ($scope.restoreFlag) {
+      if (!$scope.form.gwuuid || !$scope.form.gwtoken) {
+        alert('Please, inform gateway UUID and Token to restore it!');
+      } else {
+        userData = {
+          uuid: $scope.form.uuid,
+          token: $scope.form.token,
+          email: $stateParams.data.email,
+          password: $stateParams.data.password,
+          gwuuid: $scope.form.gwuuid,
+          gwtoken: $scope.form.gwtoken
+        };
+        restoreGateway(userData);
       }
-    });
+    } else {
+      userData = {
+        uuid: $scope.form.uuid,
+        token: $scope.form.token,
+        email: $stateParams.data.email,
+        password: $stateParams.data.password
+      };
+      AuthService.linkAccount(userData)
+      .then(function onSuccess(/* result */) {
+        alert('Gateway registered to User');
+        $state.go('app.admin');
+      }, function onError(err) {
+        if (err.status === 400) {
+          $state.go('cloud');
+        } else if (err.status === 409) {
+          alert('User authentication error');
+        } else if (err.status === 500) {
+          alert('Error registering gateway');
+        }
+      });
+    }
   };
 });
 
